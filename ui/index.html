@@ -1,0 +1,2319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sovereign Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-void:        #080c09;
+    --bg-deep:        #0d1410;
+    --bg-surface:     #111a13;
+    --bg-raised:      #172019;
+    --bg-hover:       #1e2d20;
+    --border-subtle:  #1f2e21;
+    --border-mid:     #2a3d2c;
+    --border-accent:  #3a5c3d;
+    --bio-primary:    #4caf6e;
+    --bio-bright:     #6ddb90;
+    --bio-dim:        #2d6640;
+    --bio-glow:       rgba(76, 175, 110, 0.15);
+    --bio-glow-strong:rgba(76, 175, 110, 0.28);
+    --amber:          #c8892a;
+    --amber-dim:      #7a5218;
+    --text-primary:   #d4e8d6;
+    --text-secondary: #7a9e7e;
+    --text-muted:     #3d5540;
+    --text-organism:  #a8d4ae;
+    --ambient-1:      rgba(26, 60, 30, 0.4);
+    --ambient-2:      rgba(15, 40, 20, 0.3);
+    --ambient-3:      rgba(20, 50, 25, 0.15);
+    --radius-sm:      6px;
+    --radius-md:      12px;
+    --radius-lg:      18px;
+    --font-display:   'DM Serif Display', Georgia, serif;
+    --font-body:      'Crimson Pro', Georgia, serif;
+    --font-mono:      'JetBrains Mono', monospace;
+  }
+
+  .theme-gemini-forge {
+    --bg-void:        #05080f;
+    --bg-deep:        #09101d;
+    --bg-surface:     #0f172a;
+    --bg-raised:      #152038;
+    --bg-hover:       #1e293b;
+    --border-subtle:  #1e293b;
+    --border-mid:     #28354c;
+    --border-accent:  #3b82f6;
+    --bio-primary:    #60a5fa;
+    --bio-bright:     #bfdbfe;
+    --bio-dim:        #2563eb;
+    --bio-glow:       rgba(96, 165, 250, 0.15);
+    --bio-glow-strong:rgba(96, 165, 250, 0.30);
+    --amber:          #a78bfa;
+    --amber-dim:      #7c3aed;
+    --text-primary:   #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted:     #475569;
+    --text-organism:  #bfdbfe;
+    --ambient-1:      rgba(37, 99, 235, 0.25);
+    --ambient-2:      rgba(30, 58, 138, 0.20);
+    --ambient-3:      rgba(96, 165, 250, 0.10);
+  }
+
+  .theme-neon-noir {
+    --bg-void:        #000000;
+    --bg-deep:        #050204;
+    --bg-surface:     #0d050a;
+    --bg-raised:      #170b14;
+    --bg-hover:       #210f1d;
+    --border-subtle:  #2f142a;
+    --border-mid:     #4a1e41;
+    --border-accent:  #782967;
+    --bio-primary:    #ff00a0;
+    --bio-bright:     #ff66c4;
+    --bio-dim:        #8a0056;
+    --bio-glow:       rgba(255, 0, 160, 0.15);
+    --bio-glow-strong:rgba(255, 0, 160, 0.30);
+    --amber:          #00e5ff;
+    --amber-dim:      #007a88;
+    --text-primary:   #ffffff;
+    --text-secondary: #a3859b;
+    --text-muted:     #574653;
+    --text-organism:  #ffb3df;
+    --ambient-1:      rgba(150, 0, 95, 0.23);
+    --ambient-2:      rgba(0, 150, 170, 0.18);
+    --ambient-3:      rgba(255, 0, 160, 0.08);
+  }
+
+  .theme-ghost-protocol {
+    --bg-void:        #090a0c;
+    --bg-deep:        #0e1114;
+    --bg-surface:     #15191f;
+    --bg-raised:      #1c2229;
+    --bg-hover:       #242b33;
+    --border-subtle:  #29333d;
+    --border-mid:     #3a4857;
+    --border-accent:  #536b85;
+    --bio-primary:    #8baabf;
+    --bio-bright:     #c2dcf0;
+    --bio-dim:        #455763;
+    --bio-glow:       rgba(139, 170, 191, 0.15);
+    --bio-glow-strong:rgba(139, 170, 191, 0.25);
+    --amber:          #ced6db;
+    --amber-dim:      #6e777d;
+    --text-primary:   #eaedf0;
+    --text-secondary: #748c9c;
+    --text-muted:     #41515e;
+    --text-organism:  #b2ccde;
+    --ambient-1:      rgba(69, 87, 99, 0.3);
+    --ambient-2:      rgba(40, 52, 61, 0.2);
+    --ambient-3:      rgba(139, 170, 191, 0.1);
+  }
+
+  .theme-cyber-obsidian {
+    --bg-void:        #060505;
+    --bg-deep:        #0a0808;
+    --bg-surface:     #120e0c;
+    --bg-raised:      #1c1511;
+    --bg-hover:       #261d18;
+    --border-subtle:  #2e221b;
+    --border-mid:     #453225;
+    --border-accent:  #6e4e37;
+    --bio-primary:    #d4af37;
+    --bio-bright:     #fae089;
+    --bio-dim:        #806716;
+    --bio-glow:       rgba(212, 175, 55, 0.15);
+    --bio-glow-strong:rgba(212, 175, 55, 0.25);
+    --amber:          #ff5e00;
+    --amber-dim:      #8c3500;
+    --text-primary:   #fff0d9;
+    --text-secondary: #a38d74;
+    --text-muted:     #5c4e3e;
+    --text-organism:  #fae089;
+    --ambient-1:      rgba(110, 78, 55, 0.20);
+    --ambient-2:      rgba(60, 40, 25, 0.15);
+    --ambient-3:      rgba(212, 175, 55, 0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-void);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 16px;
+    overflow: hidden;
+  }
+
+  /* Mycelium background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 20% 80%, var(--ambient-1) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 20%, var(--ambient-2) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, var(--ambient-3) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    display: flex;
+    height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--bg-deep);
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* ── EDITOR PANE ── */
+  .editor-pane {
+    display: none;
+    flex: 1;
+    min-width: 400px;
+    background: var(--bg-void);
+    border-right: 1px solid var(--border-subtle);
+    flex-direction: column;
+    position: relative;
+  }
+  .editor-header {
+    height: 52px;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-deep);
+  }
+  .editor-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-primary);
+  }
+  .editor-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .editor-btn {
+    background: transparent;
+    border: 1px solid var(--border-mid);
+    color: var(--text-primary);
+    padding: 4px 12px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+  }
+  .editor-btn:hover { background: var(--bg-hover); }
+  .editor-btn.primary { background: var(--bio-primary); color: #fff; border: none; }
+  .editor-textarea {
+    flex: 1;
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 20px;
+    color: var(--text-organism);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.5;
+    resize: none;
+    outline: none;
+    tab-size: 4;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .organism-name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--bio-primary);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+
+  .organism-name span {
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-family: var(--font-mono);
+    display: block;
+    margin-top: 3px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Health pulse */
+  .health-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bio-primary);
+    box-shadow: 0 0 8px var(--bio-primary);
+    animation: pulse 2.4s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  .pulse-dot.offline { background: #c0392b; box-shadow: 0 0 8px #c0392b; animation: none; }
+  .pulse-dot.checking { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  .health-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em;
+  }
+
+  /* Sidebar sections */
+  .sidebar-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-cell {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--bio-primary);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+  }
+
+  /* Context panel */
+  .context-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-height: 120px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .context-panel::-webkit-scrollbar { width: 3px; }
+  .context-panel::-webkit-scrollbar-track { background: transparent; }
+  .context-panel::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+
+  /* Conversation history */
+  .history-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 12px;
+  }
+
+  .history-list::-webkit-scrollbar { width: 3px; }
+  .history-list::-webkit-scrollbar-track { background: transparent; }
+  .history-list::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+
+  .history-item {
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background 0.15s, color 0.15s;
+    margin-bottom: 2px;
+    letter-spacing: 0.02em;
+  }
+
+  .history-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+  .history-item.active { background: var(--bg-raised); color: var(--bio-primary); }
+
+  .new-session-btn {
+    margin: 10px 12px;
+    padding: 9px 14px;
+    background: transparent;
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    width: calc(100% - 24px);
+    text-align: left;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .new-session-btn:hover {
+    border-color: var(--bio-dim);
+    color: var(--bio-primary);
+    background: var(--bio-glow);
+  }
+
+  .new-session-btn::before { content: '+'; font-size: 16px; line-height: 1; }
+
+  /* Config row */
+  .config-row {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .port-input {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .port-input:focus { border-color: var(--bio-dim); }
+
+  .reconnect-btn {
+    padding: 6px 10px;
+    background: var(--bio-glow);
+    border: 1px solid var(--bio-dim);
+    border-radius: var(--radius-sm);
+    color: var(--bio-primary);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .reconnect-btn:hover { background: var(--bio-glow-strong); border-color: var(--bio-primary); }
+
+  /* ── MAIN AREA ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Header */
+  .main-header {
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(13, 20, 16, 0.7);
+    backdrop-filter: blur(8px);
+    flex-shrink: 0;
+  }
+
+  .session-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .trace-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s;
+  }
+
+  .trace-toggle:hover { color: var(--text-secondary); }
+
+  .toggle-switch {
+    width: 28px;
+    height: 14px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-mid);
+    border-radius: 7px;
+    position: relative;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .toggle-switch.on { background: var(--bio-glow-strong); border-color: var(--bio-dim); }
+
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  .toggle-switch.on::after { transform: translateX(14px); background: var(--bio-primary); }
+
+  /* Messages */
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 0;
+    scroll-behavior: smooth;
+  }
+
+  .messages::-webkit-scrollbar { width: 4px; }
+  .messages::-webkit-scrollbar-track { background: transparent; }
+  .messages::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 2px; }
+
+  .message-wrapper {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 28px;
+    margin-bottom: 28px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: msgIn 0.3s ease forwards;
+  }
+
+  @keyframes msgIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message-wrapper.user { display: flex; flex-direction: column; align-items: flex-end; }
+
+  .message-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  .message-wrapper.user .message-meta { text-align: right; }
+
+  .message-bubble {
+    max-width: 88%;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    line-height: 1.7;
+    font-size: 15px;
+    position: relative;
+  }
+
+  .message-wrapper.user .message-bubble {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-mid);
+    border-bottom-right-radius: 4px;
+    color: var(--text-primary);
+  }
+
+  .message-wrapper.organism .message-bubble {
+    background: linear-gradient(135deg, rgba(17, 26, 19, 0.9) 0%, rgba(23, 32, 25, 0.9) 100%);
+    border: 1px solid var(--border-accent);
+    border-bottom-left-radius: 4px;
+    color: var(--text-organism);
+    box-shadow: 0 0 20px rgba(76, 175, 110, 0.06), inset 0 1px 0 rgba(76, 175, 110, 0.08);
+  }
+
+  .message-bubble p { margin-bottom: 0.8em; }
+  .message-bubble p:last-child { margin-bottom: 0; }
+  .message-bubble strong { font-weight: 500; color: var(--bio-bright); }
+  .message-wrapper.user .message-bubble strong { color: #fff; }
+  .message-bubble em { font-style: italic; color: var(--text-muted); }
+  .message-bubble ul { margin-left: 20px; margin-bottom: 10px; }
+  .message-bubble li { margin-bottom: 4px; }
+  .message-bubble code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: rgba(0,0,0,0.4);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border-subtle);
+    color: var(--amber);
+  }
+  .code-wrapper { margin: 12px 0; background: rgba(5, 10, 7, 0.6); border: 1px solid var(--border-accent); border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  .code-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; background: rgba(0,0,0,0.4); border-bottom: 1px solid var(--border-subtle); }
+  .code-lang { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .copy-btn { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); padding: 3px 8px; border-radius: 4px; font-size: 10px; font-family: var(--font-mono); cursor: pointer; transition: all 0.2s; }
+  .copy-btn:hover { background: var(--bio-glow); color: var(--bio-primary); border-color: var(--bio-dim); }
+  .message-bubble pre { background: transparent; padding: 12px; margin: 0; border: none; overflow-x: auto; border-radius: 0; }
+  .message-bubble pre code { background: transparent; border: none; padding: 0; color: #a5d6a7; white-space: pre; }
+  .message-wrapper.user .message-bubble pre code { color: var(--text-primary); }
+
+  /* Organism glow line */
+  .message-wrapper.organism .message-bubble::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 2px;
+    background: linear-gradient(to bottom, transparent, var(--bio-dim), transparent);
+    border-radius: 1px;
+  }
+
+  /* Trace block */
+  .trace-block {
+    margin-top: 10px;
+    background: var(--bg-void);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    display: none;
+  }
+
+  .trace-block.visible { display: block; }
+  .trace-block .trace-key { color: var(--bio-dim); }
+
+  /* Empty state */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 40px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease 0.3s forwards;
+  }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  .empty-glyph {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+    opacity: 0.4;
+  }
+
+  .empty-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
+  .empty-sub {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    line-height: 1.8;
+  }
+
+  .starter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 24px;
+    max-width: 500px;
+  }
+
+  .chip {
+    padding: 7px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-mid);
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+  }
+
+  .chip:hover {
+    border-color: var(--bio-dim);
+    color: var(--bio-primary);
+    background: var(--bio-glow);
+  }
+
+  /* Thinking animation */
+  .thinking {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(17, 26, 19, 0.9) 0%, rgba(23, 32, 25, 0.9) 100%);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius-md);
+    border-bottom-left-radius: 4px;
+    width: fit-content;
+    box-shadow: 0 0 20px rgba(76, 175, 110, 0.06);
+  }
+
+  .thinking-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--bio-dim);
+    animation: thinkDot 1.4s ease-in-out infinite;
+  }
+
+  .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+  .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes thinkDot {
+    0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; background: var(--bio-primary); }
+  }
+
+  /* ── INPUT AREA ── */
+  .input-area {
+    padding: 16px 28px 24px;
+    background: rgba(13, 20, 16, 0.85);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+  }
+
+  .input-container {
+    max-width: 780px;
+    margin: 0 auto;
+    position: relative;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-lg);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+  }
+
+  .input-container:focus-within {
+    border-color: var(--bio-dim);
+    box-shadow: 0 0 0 3px rgba(76, 175, 110, 0.08), 0 0 20px rgba(76, 175, 110, 0.06);
+  }
+
+  .input-field {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    padding: 16px 18px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--text-primary);
+    line-height: 1.6;
+    max-height: 200px;
+    min-height: 54px;
+    overflow-y: auto;
+  }
+
+  .input-field::placeholder { color: var(--text-muted); font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; }
+  .input-field::-webkit-scrollbar { width: 3px; }
+  .input-field::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+
+  .send-btn {
+    width: 36px;
+    height: 36px;
+    margin: 9px 9px 9px 0;
+    border-radius: 50%;
+    background: var(--bio-glow);
+    border: 1px solid var(--bio-dim);
+    color: var(--bio-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .send-btn:hover:not(:disabled) {
+    background: var(--bio-glow-strong);
+    border-color: var(--bio-primary);
+    box-shadow: 0 0 12px rgba(76, 175, 110, 0.2);
+  }
+
+  .send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .send-btn svg { width: 16px; height: 16px; }
+
+  .input-footer {
+    max-width: 780px;
+    margin: 8px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    padding: 0 4px;
+  }
+
+  .priority-selector {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .priority-dots {
+    display: flex;
+    gap: 3px;
+  }
+
+  .p-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--border-mid);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .p-dot.active { background: var(--bio-primary); border-color: var(--bio-primary); }
+
+  /* Notification toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    padding: 12px 18px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.25s;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { border-color: #c0392b; color: #e57373; }
+  .toast.success { border-color: var(--bio-dim); color: var(--bio-primary); }
+
+  /* Scrollbar global */
+  /* ── SETTINGS MODAL ── */
+  .settings-overlay {
+    position: fixed; inset: 0; background: rgba(8, 12, 9, 0.85);
+    backdrop-filter: blur(4px); z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .settings-overlay.show { opacity: 1; pointer-events: auto; }
+  .settings-modal {
+    width: 620px; max-width: 94%; background: var(--bg-surface);
+    border: 1px solid var(--border-mid); border-radius: var(--radius-md);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px var(--border-subtle);
+    display: flex; flex-direction: column;
+    transform: translateY(24px) scale(0.97); transition: transform 0.22s cubic-bezier(.16,1,.3,1);
+    max-height: 88vh;
+  }
+  .settings-overlay.show .settings-modal { transform: translateY(0) scale(1); }
+  .settings-header {
+    padding: 18px 24px 0; 
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-shrink: 0;
+  }
+  .settings-header h2 {
+    font-family: var(--font-display); font-size: 18px; color: var(--bio-primary); margin-bottom: 14px;
+  }
+  .settings-close {
+    background: transparent; border: none; color: var(--text-muted); padding: 4px;
+    cursor: pointer; font-size: 16px; transition: color 0.1s; margin-top: 2px;
+  }
+  .settings-close:hover { color: var(--text-primary); }
+
+  /* ── Tab bar ── */
+  .settings-tabs {
+    display: flex; gap: 2px; padding: 0 24px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+  }
+  .settings-tab {
+    padding: 8px 14px; font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.08em; color: var(--text-muted);
+    border: none; background: none; cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: all 0.15s;
+  }
+  .settings-tab:hover { color: var(--text-secondary); }
+  .settings-tab.active { color: var(--bio-primary); border-bottom-color: var(--bio-primary); }
+
+  /* ── Tab panes ── */
+  .settings-body { padding: 20px 24px; overflow-y: auto; flex: 1; min-height: 0; }
+  .settings-body::-webkit-scrollbar { width: 3px; }
+  .settings-body::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+  .settings-pane { display: none; }
+  .settings-pane.active { display: block; }
+
+  .settings-section-label {
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em;
+    color: var(--text-muted); text-transform: uppercase;
+    margin: 18px 0 10px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .settings-section-label:first-child { margin-top: 0; }
+
+  .settings-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .settings-group { margin-bottom: 14px; }
+  .settings-group.full { grid-column: 1 / -1; }
+  .settings-group label {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 6px;
+  }
+  .settings-group label .lbl-hint {
+    font-size: 9px; color: var(--text-muted); font-style: normal;
+  }
+  .settings-input {
+    width: 100%; background: var(--bg-void); border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm); padding: 9px 12px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--text-primary);
+    transition: border-color 0.15s; outline: none; box-sizing: border-box;
+  }
+  .settings-input:focus { border-color: var(--bio-dim); }
+  .settings-input[type=range] {
+    padding: 6px 0; background: none; border: none; cursor: pointer;
+  }
+  .settings-range-row { display: flex; align-items: center; gap: 10px; }
+  .settings-range-val {
+    font-family: var(--font-mono); font-size: 11px; color: var(--bio-primary);
+    min-width: 28px; text-align: right;
+  }
+
+  /* Model picker */
+  .model-picker-grid {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .model-option {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+    cursor: pointer; transition: all 0.12s;
+    background: var(--bg-void);
+  }
+  .model-option:hover { border-color: var(--border-mid); background: var(--bg-deep); }
+  .model-option.selected {
+    border-color: var(--bio-dim); background: var(--bio-glow);
+  }
+  .model-option input[type=radio] { display: none; }
+  .model-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--border-mid); flex-shrink: 0; transition: background 0.12s;
+  }
+  .model-option.selected .model-dot { background: var(--bio-primary); }
+  .model-name { font-family: var(--font-mono); font-size: 11px; color: var(--text-primary); flex: 1; }
+  .model-provider {
+    font-family: var(--font-mono); font-size: 9px; color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+  .model-group-label {
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+    color: var(--text-muted); text-transform: uppercase;
+    margin: 12px 0 6px; padding-left: 2px;
+  }
+  .model-group-label:first-child { margin-top: 0; }
+
+  .settings-footer {
+    padding: 14px 24px; border-top: 1px solid var(--border-subtle);
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--bg-deep);
+    border-bottom-left-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md);
+    flex-shrink: 0;
+  }
+  .settings-status { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+  .settings-save-btn {
+    padding: 8px 18px; background: var(--bio-glow); border: 1px solid var(--bio-dim);
+    border-radius: var(--radius-sm); color: var(--bio-primary);
+    font-family: var(--font-mono); font-size: 11px; cursor: pointer; transition: all 0.15s;
+  }
+  .settings-save-btn:hover { background: var(--bio-glow-strong); border-color: var(--bio-primary); }
+
+  .model-select {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 3px 6px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+    max-width: 220px;
+  }
+  .model-select:hover, .model-select:focus { border-color: var(--bio-dim); color: var(--bio-primary); }
+  .model-select option { background: var(--bg-void); color: var(--text-primary); }
+</style>
+</head>
+<body>
+
+<div class="settings-overlay" id="settingsOverlay" onclick="closeSettings(event)">
+  <div class="settings-modal" onclick="event.stopPropagation()">
+
+    <div class="settings-header">
+      <div>
+        <h2>Sovereign Configuration</h2>
+      </div>
+      <button class="settings-close" onclick="closeSettings(event)">✕</button>
+    </div>
+
+    <div class="settings-tabs">
+      <button class="settings-tab active" onclick="switchTab('identity')" id="tab-identity">IDENTITY</button>
+      <button class="settings-tab" onclick="switchTab('model')" id="tab-model">MODEL</button>
+      <button class="settings-tab" onclick="switchTab('keys')" id="tab-keys">API KEYS</button>
+      <button class="settings-tab" onclick="switchTab('runtime')" id="tab-runtime">RUNTIME</button>
+    </div>
+
+    <div class="settings-body">
+
+      <!-- IDENTITY TAB -->
+      <div class="settings-pane active" id="pane-identity">
+        <div class="settings-section-label">Agent Identity</div>
+        <div class="settings-row">
+          <div class="settings-group">
+            <label>AGENT NAME</label>
+            <input type="text" class="settings-input" id="cfgAGENT_NAME" placeholder="Antigravity">
+          </div>
+          <div class="settings-group">
+            <label>ENVIRONMENT</label>
+            <select class="settings-input" id="cfgENVIRONMENT">
+              <option value="development">development</option>
+              <option value="staging">staging</option>
+              <option value="production">production</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-section-label">Infrastructure</div>
+        <div class="settings-group">
+          <label>POSTGRES DSN</label>
+          <input type="text" class="settings-input" id="cfgPOSTGRES_DSN" placeholder="postgresql://user:pass@localhost:5432/db">
+        </div>
+        <div class="settings-group">
+          <label>WORKSPACE JAIL PATH <span class="lbl-hint">— sandbox root for agent file ops</span></label>
+          <input type="text" class="settings-input" id="cfgWORKSPACE_JAIL" placeholder="/home/user/projects">
+        </div>
+      </div>
+
+      <!-- MODEL TAB -->
+      <div class="settings-pane" id="pane-model">
+        <div class="settings-section-label">Active Model — overrides auto-detection</div>
+        <div class="model-picker-grid" id="modelPickerGrid">
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);padding:12px 0;">Loading models...</div>
+        </div>
+        <div class="settings-section-label" style="margin-top:18px;">Ollama</div>
+        <div class="settings-group">
+          <label>OLLAMA HOST</label>
+          <input type="text" class="settings-input" id="cfgOLLAMA_HOST" placeholder="http://localhost:11434">
+        </div>
+      </div>
+
+      <!-- API KEYS TAB -->
+      <div class="settings-pane" id="pane-keys">
+        <div class="settings-section-label">Provider API Keys</div>
+        <div class="settings-group">
+          <label>GEMINI API KEY</label>
+          <input type="password" class="settings-input" id="cfgGEMINI_API_KEY" placeholder="AIzaSy...">
+        </div>
+        <div class="settings-group">
+          <label>OPENAI API KEY</label>
+          <input type="password" class="settings-input" id="cfgOPENAI_API_KEY" placeholder="sk-...">
+        </div>
+        <div class="settings-group">
+          <label>ANTHROPIC API KEY</label>
+          <input type="password" class="settings-input" id="cfgANTHROPIC_API_KEY" placeholder="sk-ant-...">
+        </div>
+      </div>
+
+      <!-- RUNTIME TAB -->
+      <div class="settings-pane" id="pane-runtime">
+        <div class="settings-section-label">Execution Limits</div>
+        <div class="settings-row">
+          <div class="settings-group">
+            <label>MAX AGENT CYCLES</label>
+            <input type="number" class="settings-input" id="cfgMAX_AGENT_CYCLES" placeholder="15" min="1" max="100">
+          </div>
+          <div class="settings-group">
+            <label>CONTEXT MEMORY LIMIT <span class="lbl-hint">turns</span></label>
+            <input type="number" class="settings-input" id="cfgCONTEXT_MEMORY_LIMIT" placeholder="6" min="1" max="50">
+          </div>
+        </div>
+        <div class="settings-group">
+          <label>AGENT TEMPERATURE <span class="lbl-hint" id="tempVal"></span></label>
+          <div class="settings-range-row">
+            <input type="range" class="settings-input" id="cfgAGENT_TEMPERATURE"
+              min="0" max="2" step="0.05" value="0.7"
+              oninput="document.getElementById('tempVal').textContent = ' — ' + parseFloat(this.value).toFixed(2)">
+            <span class="settings-range-val" id="tempDisplay">0.70</span>
+          </div>
+        </div>
+        <div class="settings-section-label">Behavior</div>
+        <div class="settings-row">
+          <div class="settings-group">
+            <label>STRICT QUARANTINE</label>
+            <select class="settings-input" id="cfgSTRICT_QUARANTINE">
+              <option value="false">False — bypass active</option>
+              <option value="true">True — always confirm</option>
+            </select>
+          </div>
+          <div class="settings-group">
+            <label>LOG LEVEL</label>
+            <select class="settings-input" id="cfgLOG_LEVEL">
+              <option value="INFO">INFO</option>
+              <option value="DEBUG">DEBUG</option>
+              <option value="WARNING">WARNING</option>
+              <option value="ERROR">ERROR</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-group">
+            <label>STREAM RESPONSES</label>
+            <select class="settings-input" id="cfgSTREAM_RESPONSES">
+              <option value="true">Enabled — token streaming</option>
+              <option value="false">Disabled — batch output</option>
+            </select>
+          </div>
+          <div class="settings-group">
+            <label>UI THEME <span class="lbl-hint">Restart not required</span></label>
+            <select class="settings-input" id="cfgUI_THEME" onchange="document.documentElement.className = this.value">
+              <option value="theme-bioforge">Bioforge Green (Default)</option>
+              <option value="theme-gemini-forge">Gemini Forge (Victory)</option>
+              <option value="theme-neon-noir">Neon Noir</option>
+              <option value="theme-ghost-protocol">Ghost Protocol</option>
+              <option value="theme-cyber-obsidian">Cyber Obsidian</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="settings-footer">
+      <span class="settings-status" id="settingsStatus"></span>
+      <button class="settings-save-btn" id="saveSettingsBtn" onclick="saveSettings()">Save Configuration</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="organism-name">
+        Sovereign
+        <span>engine // runtime</span>
+      </div>
+      <div class="health-row">
+        <div class="pulse-dot checking" id="pulseDot"></div>
+        <span class="health-label" id="healthLabel">CONNECTING...</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="section-title">Cortex State</div>
+      <div class="stats-grid">
+        <div class="stat-cell">
+          <div class="stat-value" id="statMemories">—</div>
+          <div class="stat-label">MEMORIES</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-value" id="statPathways">—</div>
+          <div class="stat-label">PATHWAYS</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-value" id="statSession">0</div>
+          <div class="stat-label">THIS SESSION</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-value" id="statUptime">—</div>
+          <div class="stat-label">UPTIME</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="section-title">Context</div>
+      <div class="context-panel" id="contextPanel">awaiting connection...</div>
+    </div>
+
+    <div class="sidebar-section" 
+         ondragover="event.preventDefault(); this.style.background='var(--bg-hover)';" 
+         ondragleave="this.style.background='transparent';" 
+         ondrop="event.preventDefault(); this.style.background='transparent'; dropProject(event);">
+      <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Workspace <span style="color: var(--bio-glow-strong);">[Drop Jail]</span></span>
+        <div>
+          <button onclick="clearWorkspace()" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:12px; line-height:1; padding:0 4px; margin-right:4px;" title="Clear Workspace">×</button>
+          <button onclick="toggleInlineNew()" style="background:transparent; border:none; cursor:pointer; color:var(--bio-primary); font-size:12px; line-height:1; padding:0 4px;" title="Create new file in active workspace">+</button>
+        </div>
+      </div>
+      <div id="inlineNewContainer" style="display:none; padding:4px 8px; background:var(--bg-layer-2);">
+        <input type="text" id="inlineNewInput" placeholder="filename (e.g. core.py)..." style="width:100%; font-size:10px; padding:4px; font-family: monospace; background:transparent; border:1px solid var(--border-dim); color:var(--text-primary); outline:none;" onkeydown="handleNewFileKey(event)">
+      </div>
+      <div class="history-list" id="workspaceList" style="padding: 0; max-height: 180px; margin-bottom: 8px;"></div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="section-title">Projects</div>
+      <div class="history-list" id="projectsList" style="padding: 0; max-height: 140px; margin-bottom: 8px;"></div>
+    </div>
+
+    <div class="section-title" style="padding: 12px 20px 4px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--text-muted); text-transform: uppercase;">Sessions</div>
+    <button class="new-session-btn" onclick="newSession()">New Session</button>
+    <button class="new-session-btn" style="margin-top: 0; margin-bottom: 2px;" onclick="openSettings()">Configuration Mode</button>
+    <div class="history-list" id="historyList"></div>
+
+
+  </aside>
+
+  <!-- EDITOR -->
+  <section class="editor-pane" id="editorPane">
+    <div class="editor-header">
+      <span class="editor-title" id="editorTitle">filename.py</span>
+      <div class="editor-actions">
+        <button class="editor-btn primary" id="saveEditorBtn" onclick="saveEditor()">SAVE CODE</button>
+        <button class="editor-btn" onclick="closeEditor()">✕</button>
+      </div>
+    </div>
+    <textarea class="editor-textarea" id="editorTextarea" spellcheck="false" placeholder="Select a file from the Workspace to edit..."></textarea>
+  </section>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-header">
+      <span class="session-title" id="sessionTitle">SESSION // INITIALIZING</span>
+      <div class="header-actions">
+        <button class="new-session-btn" style="padding: 4px 10px; margin: 0 10px; font-size: 10px; background: transparent; border: 1px solid var(--border-accent);" onclick="exportSession()">EXPORT TO .MD</button>
+        <label class="trace-toggle" onclick="toggleTrace()">
+          <div class="toggle-switch" id="traceToggle"></div>
+          EXECUTION TRACE
+        </label>
+      </div>
+    </div>
+
+    <div class="messages" id="messagesEl">
+      <div class="empty-state" id="emptyState">
+        <img src="assets/organism.jpeg" alt="Sovereign" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; opacity: 0.9; margin-bottom: 30px; border: 1px solid var(--border-accent); box-shadow: 0 0 50px rgba(76, 175, 110, 0.15);" onerror="console.error('Avatar load failed'); this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <svg class="empty-glyph" style="display: none;" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="20" stroke="#4caf6e" stroke-width="1" opacity="0.5"/>
+          <circle cx="32" cy="32" r="12" stroke="#4caf6e" stroke-width="1" opacity="0.4"/>
+          <circle cx="32" cy="32" r="4" fill="#4caf6e" opacity="0.6"/>
+          <line x1="32" y1="4" x2="32" y2="16" stroke="#4caf6e" stroke-width="1" opacity="0.3"/>
+          <line x1="32" y1="48" x2="32" y2="60" stroke="#4caf6e" stroke-width="1" opacity="0.3"/>
+          <line x1="4" y1="32" x2="16" y2="32" stroke="#4caf6e" stroke-width="1" opacity="0.3"/>
+          <line x1="48" y1="32" x2="60" y2="32" stroke="#4caf6e" stroke-width="1" opacity="0.3"/>
+          <line x1="12" y1="12" x2="20" y2="20" stroke="#4caf6e" stroke-width="1" opacity="0.2"/>
+          <line x1="44" y1="44" x2="52" y2="52" stroke="#4caf6e" stroke-width="1" opacity="0.2"/>
+          <line x1="52" y1="12" x2="44" y2="20" stroke="#4caf6e" stroke-width="1" opacity="0.2"/>
+          <line x1="20" y1="44" x2="12" y2="52" stroke="#4caf6e" stroke-width="1" opacity="0.2"/>
+        </svg>
+        <div class="empty-title">The organism is awake.</div>
+        <div class="empty-sub">CortexDB is seeded and ready.<br>Give it a directive.</div>
+        <div class="starter-chips">
+          <div class="chip" onclick="useChip(this)">audit my current build state</div>
+          <div class="chip" onclick="useChip(this)">what do you remember about this project?</div>
+          <div class="chip" onclick="useChip(this)">build me a FastAPI server with JWT auth</div>
+          <div class="chip" onclick="useChip(this)">what failures have you logged?</div>
+          <div class="chip" onclick="useChip(this)">run an adversarial review on the current plan</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-container">
+        <textarea
+          class="input-field"
+          id="inputField"
+          placeholder="give the organism a directive..."
+          rows="1"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+      <div class="input-footer">
+        <div class="priority-selector">
+          <select id="modelSelect" class="model-select" title="Select active model">
+            <option value="">Auto-Detect Model</option>
+          </select>
+          <span style="margin: 0 8px; color: var(--border-mid)">|</span>
+          PRIORITY
+          <div class="priority-dots" id="priorityDots">
+            <div class="p-dot" onclick="setPriority(1)"></div>
+            <div class="p-dot" onclick="setPriority(2)"></div>
+            <div class="p-dot active" onclick="setPriority(3)"></div>
+            <div class="p-dot" onclick="setPriority(4)"></div>
+            <div class="p-dot" onclick="setPriority(5)"></div>
+          </div>
+          <span id="priorityLabel">3 / STANDARD</span>
+        </div>
+        <span>⏎ send · shift+⏎ newline</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+const BASE_URL = `${window.location.origin}/api`;
+let priority = 3;
+let traceEnabled = false;
+let sessionCount = 0;
+let sessions = [];
+let currentSessionId = null;
+let isThinking = false;
+let globalAgentName = 'organism';
+let conversationHistory = [];
+let startTime = Date.now();
+
+const PRIORITY_LABELS = { 1: 'LOW', 2: 'REDUCED', 3: 'STANDARD', 4: 'HIGH', 5: 'CRITICAL' };
+
+// ── INIT ──
+window.addEventListener('DOMContentLoaded', () => {
+  loadSessions();
+  connect();
+  setInterval(pingHealth, 12000);
+  setInterval(updateUptime, 1000);
+  setInterval(saveSessions, 5000);
+  document.getElementById('inputField').addEventListener('input', () => {
+    document.getElementById('sendBtn').disabled =
+      document.getElementById('inputField').value.trim() === '' || isThinking;
+  });
+});
+
+// ── CONNECTION ──
+async function connect() {
+  await pingHealth();
+  await loadContext();
+  await loadProjects();
+  await loadWorkspace();
+  await populateModelPicker();
+}
+
+async function populateModelPicker() {
+  const select = document.getElementById('modelSelect');
+  if (!select) return;
+  try {
+    const [modelRes, envRes] = await Promise.all([
+      fetch(`${BASE_URL}/models`),
+      fetch(`${BASE_URL}/settings`)
+    ]);
+    if (!modelRes.ok) return;
+    
+    const data = await modelRes.json();
+    const env = envRes.ok ? await envRes.json() : {};
+
+    const providerLabels = {
+      gemini: 'Google Gemini',
+      openai: 'OpenAI',
+      anthropic: 'Anthropic',
+      ollama: 'Ollama (local)'
+    };
+
+    // Preserve existing selection
+    const current = select.value;
+    select.innerHTML = '<option value="">Auto-Detect Model</option>';
+
+    for (const [provider, models] of Object.entries(data)) {
+      if (!models || !models.length) continue;
+      
+      const isValidKey = (k) => k && k.trim() !== '' && k !== 'sk-...' && k !== 'sk-ant-...';
+      // Filter out providers we don't have keys for
+      if (provider === 'gemini' && !isValidKey(env.GEMINI_API_KEY)) continue;
+      if (provider === 'openai' && !isValidKey(env.OPENAI_API_KEY)) continue;
+      if (provider === 'anthropic' && !isValidKey(env.ANTHROPIC_API_KEY)) continue;
+      
+      const group = document.createElement('optgroup');
+      group.label = providerLabels[provider] || provider;
+      models.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        group.appendChild(opt);
+      });
+      select.appendChild(group);
+    }
+
+    // Restore selection — or sync from env ACTIVE_MODEL
+    if (current) {
+      select.value = current;
+    } else {
+      try {
+        const s = await fetch(`${BASE_URL}/settings`);
+        const env = await s.json();
+        if (env.ACTIVE_MODEL && env.ACTIVE_MODEL !== 'auto') {
+          select.value = env.ACTIVE_MODEL;
+        }
+      } catch(_) {}
+    }
+  } catch(e) { console.error('Model picker failed', e); }
+}
+
+async function pingHealth() {
+  const dot = document.getElementById('pulseDot');
+  const label = document.getElementById('healthLabel');
+  try {
+    const r = await fetch(`${BASE_URL}/health`, { signal: (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(3000) : undefined });
+    const data = await r.json();
+    if (data.agent_name) {
+      globalAgentName = data.agent_name;
+      const emptyTitle = document.querySelector('.empty-title');
+      if (emptyTitle) emptyTitle.textContent = `The ${globalAgentName.toLowerCase()} is awake.`;
+      const taskInput = document.getElementById('taskInput');
+      if (taskInput) taskInput.placeholder = `give ${globalAgentName.toLowerCase()} a directive...`;
+    }
+    dot.className = 'pulse-dot';
+    label.textContent = data.status?.toUpperCase() || 'ONLINE';
+    document.getElementById('sessionTitle').textContent =
+      `SESSION // ${new Date().toLocaleDateString('en-US', {month:'short',day:'numeric'})} · ${currentSessionId || '—'}`;
+    updateStats(data);
+  } catch {
+    dot.className = 'pulse-dot offline';
+    label.textContent = 'OFFLINE';
+  }
+}
+
+function updateStats(data) {
+  if (data.memories !== undefined) document.getElementById('statMemories').textContent = data.memories;
+  if (data.pathways !== undefined) document.getElementById('statPathways').textContent = data.pathways;
+}
+
+async function loadContext() {
+  try {
+    const r = await fetch(`${BASE_URL}/context`, { signal: (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(3000) : undefined });
+    const data = await r.json();
+    const panel = document.getElementById('contextPanel');
+    if (data && data.context) {
+      if (typeof marked !== 'undefined') {
+        panel.innerHTML = marked.parse(data.context);
+      } else {
+        panel.textContent = data.context;
+      }
+    } else {
+      panel.textContent = 'No context payload found.';
+    }
+  } catch {
+    document.getElementById('contextPanel').textContent = 'context unavailable';
+  }
+}
+
+async function loadWorkspace() {
+  try {
+    const r = await fetch(`${BASE_URL}/workspace`);
+    const data = await r.json();
+    const list = document.getElementById('workspaceList');
+    if (data.ok && data.files.length) {
+      function renderTree(nodes, indent) {
+        return nodes.map(f => {
+          if (f.is_dir) {
+            return `<div class="tree-dir">
+              <div style="cursor: pointer; padding-left: ${indent}px; display: flex; align-items: center; white-space: nowrap; padding-top: 2px; padding-bottom: 2px;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.firstElementChild.textContent = this.nextElementSibling.style.display === 'none' ? '▶' : '▼';">
+                <span class="chevron" style="font-size: 8px; margin-right: 4px; color: var(--text-muted); width: 10px; display: inline-block; text-align: center;">▼</span> 
+                <span style="color: var(--bio-primary); font-size: 10px; margin-right: 4px;">📁</span> <span style="font-size: 11px;">${f.name}</span>
+              </div>
+              <div class="children" style="display: block;">
+                ${renderTree(f.children, indent + 14)}
+              </div>
+            </div>`;
+          } else {
+            return `<div class="history-item" style="padding-left: ${indent + 14}px; display: flex; justify-content: space-between; align-items: center;" title="${f.path}">
+              <div style="cursor: pointer; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" onclick="openEditor('${f.path.replace(/'/g, "\\'")}')">
+                <span style="color: var(--text-muted); font-size: 10px; margin-right: 4px;">📄</span> ${f.name}
+              </div>
+              <button onclick="document.getElementById('inputField').value = 'Read ${f.path.replace(/'/g, "\\'")}'; autoResize(document.getElementById('inputField')); document.getElementById('inputField').focus();" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:10px; padding: 0 4px;" title="Send path to prompt">↗</button>
+            </div>`;
+          }
+        }).join('');
+      }
+      list.innerHTML = renderTree(data.files, 8);
+    } else {
+      list.innerHTML = `<div style="font-size:11px; color:var(--text-muted); padding:4px 10px;">empty workspace</div>`;
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function clearWorkspace() {
+  try {
+    const r = await fetch(`${BASE_URL}/workspace/jail`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ location: '', name: '' })
+    });
+    const data = await r.json();
+    if (data.ok) {
+      showToast('Workspace unmounted.', 'success');
+      loadWorkspace();
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function loadProjects() {
+  try {
+    const r = await fetch(`${BASE_URL}/projects`);
+    const data = await r.json();
+    const list = document.getElementById('projectsList');
+    if (data.ok && data.projects.length) {
+      list.innerHTML = data.projects.map(p => 
+        `<div class="history-item" draggable="true" style="user-select: none; -webkit-user-drag: element; cursor: grab;" ondragstart="event.dataTransfer.setData('application/json', JSON.stringify({location: '${p.location}', name: '${p.name.replace(/'/g, "\\'")}'})); event.dataTransfer.effectAllowed='copyMove'; this.style.opacity='0.5';" ondragend="this.style.opacity='1';" onclick="setActiveProject('${p.name.replace(/'/g, "\\'")}')" title="${p.status} | Drag to Workspace Jail">
+          <span style="color: var(--bio-primary); font-size: 8px; vertical-align: middle; margin-right: 4px;">●</span> ${p.name}
+        </div>`
+      ).join('');
+    } else {
+      list.innerHTML = `<div style="font-size:11px; color:var(--text-muted); padding:4px 10px;">no active projects</div>`;
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function dropProject(e) {
+  const payloadStr = e.dataTransfer.getData('application/json');
+  if (!payloadStr) {
+      showToast('Payload failed to extract structurally.', 'error');
+      return;
+  }
+  const payload = JSON.parse(payloadStr);
+  showToast(`Beaming payload...`, 'success');
+  try {
+    const r = await fetch(`${BASE_URL}/workspace/jail`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ location: payload.location, name: payload.name })
+    });
+    const data = await r.json();
+    if (data.ok) {
+      showToast(`Workspace actively mapped to System Matrix.`, 'success');
+      loadWorkspace();
+    } else {
+      showToast(data.error || 'Failed to map boundary', 'error');
+    }
+  } catch(err) { showToast('Backend link severed.', 'error'); }
+}
+
+async function setActiveProject(name) {
+  try {
+    const r = await fetch(`${BASE_URL}/projects/active`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ project_name: name })
+    });
+    if (r.ok) {
+      showToast(`Context locked to project: ${name}`, 'success');
+      loadContext();
+    }
+  } catch(e) { console.error(e); }
+}
+
+// ── MESSAGING ──
+async function sendMessage() {
+  const field = document.getElementById('inputField');
+  const text = field.value.trim();
+  if (!text || isThinking) return;
+
+  field.value = '';
+  autoResize(field);
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('emptyState')?.remove();
+  isThinking = true;
+  sessionCount++;
+  document.getElementById('statSession').textContent = sessionCount;
+
+  appendMessage('user', text);
+  conversationHistory.push({ role: 'user', content: text });
+  const thinkEl = appendThinking();
+
+  try {
+    const r = await fetch(`${BASE_URL}/invoke`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        prompt: text, 
+        priority,
+        history: conversationHistory,
+        model_override: document.getElementById('modelSelect')?.value || undefined 
+      }),
+      signal: (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(300000) : undefined
+    });
+
+    const data = await r.json();
+    thinkEl.remove();
+
+    const response = data.text || data.response || data.result || data.output || data.message ||
+      (typeof data === 'string' ? data : JSON.stringify(data, null, 2));
+    const trace = data.trace || data.execution_trace || data.log || null;
+
+    conversationHistory.push({ role: 'assistant', content: response });
+    appendMessage('organism', response, trace);
+    await loadContext();
+    addToHistory(text);
+
+    if (data.pending_approval) {
+        const msgs = document.getElementById('messagesEl');
+        const card = document.createElement('div');
+        card.id = 'quarantine-active';
+        card.style.cssText = 'border: 1px solid #f85149; background: rgba(248,81,73,0.1); padding: 12px; margin: 10px 0; border-radius: 6px; font-family: monospace; color: #c9d1d9; font-size: 13px;';
+        
+        // JSON encode payload to safely embed in onclick
+        const safePayload = JSON.stringify(data.pending_approval.payload || "").replace(/"/g, '&quot;');
+        let displayPayload = data.pending_approval.tool === 'write' ? `WRITE FILE: ${data.pending_approval.fpath}\n\n${data.pending_approval.payload}` : `EXECUTE: ${data.pending_approval.payload}`;
+        
+        card.innerHTML = `
+            <div style="color: #f85149; font-weight: bold; margin-bottom: 8px;">[SYSTEM INTERCEPT: APPROVAL REQUIRED]</div>
+            <div style="white-space: pre-wrap; margin-bottom: 12px;">${displayPayload}</div>
+            <button onclick="approveAction('${data.pending_approval.tool}', ${safePayload}, '${data.pending_approval.fpath || ''}')" style="background:#238636; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; margin-right:8px;">Approve</button>
+            <button onclick="denyAction()" style="background:transparent; border:1px solid #f85149; color:#f85149; padding:6px 12px; border-radius:4px; cursor:pointer;">Deny</button>
+        `;
+        msgs.appendChild(card);
+        
+        document.getElementById('inputField').disabled = true;
+        document.getElementById('sendBtn').disabled = true;
+        isThinking = true; 
+    } else {
+        isThinking = false;
+        document.getElementById('sendBtn').disabled = field.value.trim() === '';
+    }
+
+  } catch (err) {
+    thinkEl.remove();
+    appendMessage('organism', `[!] Organism unreachable — ${err.message}. Check that the engine is running on ${BASE_URL}.`, null);
+    showToast('Connection failed — is the engine running?', 'error');
+    isThinking = false;
+    document.getElementById('sendBtn').disabled = field.value.trim() === '';
+  }
+
+  scrollToBottom();
+}
+
+window.approveAction = async function(tool, payload, fpath) {
+  const card = document.getElementById('quarantine-active');
+  if (card) {
+      card.innerHTML = `<span style="color:#58a6ff; font-family:var(--font-mono); font-size:12px;">[Action Approved. Bypassing safely to native subprocess...]</span>`;
+      card.removeAttribute('id');
+  }
+  
+  const thinkEl = appendThinking();
+  document.getElementById('inputField').disabled = false;
+  
+  try {
+      const r = await fetch(`${BASE_URL}/execute_raw`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tool, payload, fpath })
+      });
+      const data = await r.json();
+      
+      const response = data.text || data.response;
+      conversationHistory.push({ 
+          role: 'user', 
+          content: `[SYSTEM] The operator manually executed the intercepted command on your behalf. Here is the exact physical output:\n\n${response}\n\nCRITICAL CONSTRAINT: The command has already been successfully executed by the host. DO NOT emit the XML block again. State your final answer or proceed to the next unique action.` 
+      });
+      
+      thinkEl.remove();
+      appendMessage('organism', response);
+      
+      isThinking = false; 
+      const field = document.getElementById('inputField');
+      field.value = "Execution bypass complete. Read the outcome provided above and confirm completion. Do NOT generate the same XML tag again.";
+      sendMessage();
+  } catch (e) {
+      console.error(e);
+      thinkEl.remove();
+      isThinking = false;
+  }
+};
+
+window.denyAction = function() {
+    const card = document.getElementById('quarantine-active');
+    if (card) {
+        card.innerHTML = `<span style="color:#f85149; font-family:var(--font-mono); font-size:12px;">[Action Denied. Cycle broken.]</span>`;
+        card.removeAttribute('id');
+    }
+    
+    document.getElementById('inputField').disabled = false;
+    document.getElementById('inputField').focus();
+    
+    // Embed the memory implicitly without triggering the LLM yet
+    conversationHistory.push({ role: 'user', content: '[SYSTEM] Operator physically denied the execution. Drop the command and await explicit human instructions.' });
+    
+    isThinking = false;
+    appendMessage('user', '[SYSTEM] Execution completely denied. Awaiting manual override.');
+};
+
+function parseMarkdown(text) {
+  if (!text) return '';
+  let html = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+    
+  const codeBlocks = [];
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+    codeBlocks.push({ lang: lang || 'TEXT', code: code });
+    return `__CODEBLOCK_${codeBlocks.length - 1}__`;
+  });
+  html = html.replace(/```([\s\S]*?)```/g, (match, code) => {
+    codeBlocks.push({ lang: 'TEXT', code: code });
+    return `__CODEBLOCK_${codeBlocks.length - 1}__`;
+  });
+
+  html = html.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  html = html.replace(/^[\s-]*\*\s+(.*)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+  
+  html = html.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+  
+  html = html.replace(/__CODEBLOCK_(\d+)__/g, (match, index) => {
+    const cb = codeBlocks[index];
+    return `<div class="code-wrapper"><div class="code-header"><span class="code-lang">${cb.lang}</span><button class="copy-btn" onclick="copyCodeBlock(this)">COPY</button></div><pre><code>${cb.code}</code></pre></div>`;
+  });
+  
+  return `<p>${html}</p>`;
+}
+
+window.copyCodeBlock = function(btn) {
+  const codeBlock = btn.parentElement.nextElementSibling.querySelector('code');
+  if (!codeBlock) return;
+  const tempTextArea = document.createElement("textarea");
+  tempTextArea.value = codeBlock.textContent;
+  document.body.appendChild(tempTextArea);
+  tempTextArea.select();
+  document.execCommand("copy");
+  document.body.removeChild(tempTextArea);
+  
+  btn.textContent = 'COPIED';
+  btn.style.color = 'var(--bio-primary)';
+  btn.style.borderColor = 'var(--bio-dim)';
+  setTimeout(() => { 
+    btn.textContent = 'COPY'; 
+    btn.style.color = ''; 
+    btn.style.borderColor = ''; 
+  }, 2000);
+};
+
+function appendMessage(role, text, trace) {
+  const msgs = document.getElementById('messagesEl');
+  const wrapper = document.createElement('div');
+  wrapper.className = `message-wrapper ${role}`;
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const meta = document.createElement('div');
+  meta.className = 'message-meta';
+  meta.textContent = role === 'user' ? `operator · ${timeStr}` : `${globalAgentName.toLowerCase()} · ${timeStr}`;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'message-bubble';
+  bubble.innerHTML = parseMarkdown(text);
+
+  wrapper.appendChild(meta);
+  wrapper.appendChild(bubble);
+
+  if (trace && role === 'organism') {
+    const traceBtn = document.createElement('button');
+    traceBtn.className = 'agent-btn process-btn';
+    traceBtn.style.marginTop = '8px';
+    traceBtn.innerHTML = '⚡ View Execution Trace';
+    
+    // Store trace in a closure so it can be opened easily
+    const traceStr = formatTrace(trace);
+    traceBtn.onclick = () => openTraceInEditor(traceStr);
+    
+    wrapper.appendChild(traceBtn);
+  }
+
+  msgs.appendChild(wrapper);
+  scrollToBottom();
+}
+
+function formatTrace(trace) {
+  if (typeof trace === 'object') {
+    return Object.entries(trace)
+      .map(([k, v]) => `<span class="trace-key">${k}</span>: ${JSON.stringify(v)}`)
+      .join('\n');
+  }
+  return String(trace);
+}
+
+function appendThinking() {
+  const msgs = document.getElementById('messagesEl');
+  const wrapper = document.createElement('div');
+  wrapper.className = 'message-wrapper organism';
+
+  const meta = document.createElement('div');
+  meta.className = 'message-meta';
+  meta.textContent = `${globalAgentName.toLowerCase()} · processing`;
+
+  const thinking = document.createElement('div');
+  thinking.className = 'thinking';
+  thinking.innerHTML = `
+    <div class="thinking-dot"></div>
+    <div class="thinking-dot"></div>
+    <div class="thinking-dot"></div>
+  `;
+
+  wrapper.appendChild(meta);
+  wrapper.appendChild(thinking);
+  msgs.appendChild(wrapper);
+  scrollToBottom();
+  return wrapper;
+}
+
+function scrollToBottom() {
+  const msgs = document.getElementById('messagesEl');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ── SESSIONS ──
+function newSession() {
+  if (currentSessionId) {
+    const old_s = sessions.find(s => s.id === currentSessionId);
+    if (old_s) {
+      old_s.html = document.getElementById('messagesEl').innerHTML;
+      old_s.history = [...conversationHistory];
+      old_s.count = sessionCount;
+    }
+  }
+
+  const id = `s${Date.now().toString(36).slice(-5).toUpperCase()}`;
+  currentSessionId = id;
+  conversationHistory = [];
+  sessionCount = 0;
+  
+  sessions.unshift({ id, title: 'New Session', history: [], html: '', count: 0 });
+  renderHistory();
+  
+  const msgs = document.getElementById('messagesEl');
+  msgs.innerHTML = `
+    <div class="empty-state" id="emptyState">
+      <svg class="empty-glyph" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="20" stroke="#4caf6e" stroke-width="1" opacity="0.5"/>
+        <circle cx="32" cy="32" r="12" stroke="#4caf6e" stroke-width="1" opacity="0.4"/>
+        <circle cx="32" cy="32" r="4" fill="#4caf6e" opacity="0.6"/>
+        <line x1="32" y1="4" x2="32" y2="16" stroke="#4caf6e" stroke-width="1" opacity="0.3"/>
+        <line x1="32" y1="48" x2="32" y2="60" stroke="#4caf6e" stroke-width="1" opacity="0.3"/>
+        <line x1="4" y1="32" x2="16" y2="32" stroke="#4caf6e" stroke-width="1" opacity="0.3"/>
+        <line x1="48" y1="32" x2="60" y2="32" stroke="#4caf6e" stroke-width="1" opacity="0.3"/>
+        <line x1="12" y1="12" x2="20" y2="20" stroke="#4caf6e" stroke-width="1" opacity="0.2"/>
+        <line x1="44" y1="44" x2="52" y2="52" stroke="#4caf6e" stroke-width="1" opacity="0.2"/>
+        <line x1="52" y1="12" x2="44" y2="20" stroke="#4caf6e" stroke-width="1" opacity="0.2"/>
+        <line x1="20" y1="44" x2="12" y2="52" stroke="#4caf6e" stroke-width="1" opacity="0.2"/>
+      </svg>
+      <div class="empty-title">The organism is awake.</div>
+      <div class="empty-sub">CortexDB is seeded and ready.<br>Give it a directive.</div>
+      <div class="starter-chips">
+        <div class="chip" onclick="useChip(this)">audit my current build state</div>
+        <div class="chip" onclick="useChip(this)">what do you remember about this project?</div>
+        <div class="chip" onclick="useChip(this)">build me a FastAPI server with JWT auth</div>
+        <div class="chip" onclick="useChip(this)">what failures have you logged?</div>
+        <div class="chip" onclick="useChip(this)">run an adversarial review on the current plan</div>
+      </div>
+    </div>`;
+    
+  document.getElementById('statSession').textContent = '0';
+  document.getElementById('sessionTitle').textContent = `SESSION // ${id}`;
+}
+
+function addToHistory(text) {
+  const s = sessions.find(s => s.id === currentSessionId);
+  if (s) s.title = text.slice(0, 32) + (text.length > 32 ? '…' : '');
+  saveSessions();
+  renderHistory();
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  list.innerHTML = sessions.map(s => `
+    <div class="history-item${s.id === currentSessionId ? ' active' : ''}"
+         onclick="switchSession('${s.id}')"
+         title="${s.title}">
+      <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${s.title}</span>
+      <button onclick="closeSession('${s.id}', event)" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 10px; padding: 0 4px;">✕</button>
+    </div>
+  `).join('');
+}
+
+function switchSession(id) {
+  if (id === currentSessionId) return;
+
+  const old_s = sessions.find(s => s.id === currentSessionId);
+  if (old_s) {
+    old_s.html = document.getElementById('messagesEl').innerHTML;
+    old_s.history = [...conversationHistory];
+    old_s.count = sessionCount;
+  }
+
+  const new_s = sessions.find(s => s.id === id);
+  if (!new_s) return;
+
+  currentSessionId = id;
+  document.getElementById('sessionTitle').textContent = `SESSION // ${id}`;
+  
+  if (new_s.html) {
+      document.getElementById('messagesEl').innerHTML = new_s.html;
+      conversationHistory = new_s.history || [];
+      sessionCount = new_s.count || 0;
+  }
+  
+  document.getElementById('statSession').textContent = sessionCount;
+  renderHistory();
+  scrollToBottom();
+}
+
+function closeSession(id, event) {
+  event.stopPropagation();
+  sessions = sessions.filter(s => s.id !== id);
+  if (sessions.length === 0) {
+      newSession();
+  } else if (currentSessionId === id) {
+      switchSession(sessions[0].id);
+  } else {
+      renderHistory();
+  }
+  saveSessions();
+}
+
+function saveSessions() {
+    if (currentSessionId) {
+        const s = sessions.find(x => x.id === currentSessionId);
+        if (s) {
+            s.html = document.getElementById('messagesEl').innerHTML;
+            s.history = [...conversationHistory];
+            s.count = sessionCount;
+        }
+    }
+    localStorage.setItem('sovereign_sessions', JSON.stringify(sessions));
+    localStorage.setItem('sovereign_current', currentSessionId);
+}
+
+function loadSessions() {
+    const saved = localStorage.getItem('sovereign_sessions');
+    if (saved) {
+        try { sessions = JSON.parse(saved); } catch(e) { sessions = []; }
+    }
+    if (sessions && sessions.length > 0) {
+        const id = localStorage.getItem('sovereign_current') || sessions[0].id;
+        currentSessionId = id;
+        const s = sessions.find(x => x.id === id) || sessions[0];
+        currentSessionId = s.id;
+        document.getElementById('sessionTitle').textContent = `SESSION // ${s.id}`;
+        document.getElementById('messagesEl').innerHTML = s.html || '';
+        conversationHistory = s.history || [];
+        sessionCount = s.count || 0;
+        document.getElementById('statSession').textContent = sessionCount;
+        renderHistory();
+        scrollToBottom();
+    } else {
+        newSession();
+    }
+}
+
+function exportSession() {
+  if (!conversationHistory || conversationHistory.length === 0) {
+      showToast('No session data to export', 'error');
+      return;
+  }
+  
+  let md = `# Session ${currentSessionId}\\n\\n`;
+  md += `> Exported at: ${new Date().toISOString()}\\n\\n`;
+  
+  conversationHistory.forEach(msg => {
+      md += `### [${msg.role.toUpperCase()}]\\n`;
+      md += `${msg.content}\\n\\n`;
+      md += `---\\n\\n`;
+  });
+  
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Sovereign_Session_${currentSessionId}.md`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+  
+  showToast('Session exported to Markdown', 'success');
+}
+
+// ── UI HELPERS ──
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+// ── FILE EDITOR ──
+let currentEditorFile = null;
+
+function toggleInlineNew() {
+  const container = document.getElementById('inlineNewContainer');
+  const input = document.getElementById('inlineNewInput');
+  if (container.style.display === 'none') {
+    container.style.display = 'block';
+    input.focus();
+  } else {
+    container.style.display = 'none';
+    input.value = '';
+  }
+}
+
+function openTraceInEditor(traceStr) {
+  currentEditorFile = null; // Traces cannot be saved
+  document.getElementById('editorTitle').textContent = `[ ⚡ Execution Trace Log ]`;
+  document.getElementById('editorTextarea').value = traceStr;
+  document.getElementById('editorTextarea').readOnly = true;
+  document.getElementById('saveEditorBtn').style.display = 'none'; // Hide save button for read-only traces
+  document.getElementById('editorPane').style.display = 'flex';
+}
+
+function handleNewFileKey(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const fileName = e.target.value.trim();
+    if (!fileName) return;
+    currentEditorFile = fileName;
+    document.getElementById('editorTitle').textContent = fileName.split('/').pop() || fileName;
+    document.getElementById('editorTextarea').value = '';
+    document.getElementById('editorTextarea').readOnly = false;
+    document.getElementById('saveEditorBtn').style.display = 'inline-block';
+    document.getElementById('editorPane').style.display = 'flex';
+    document.getElementById('editorTextarea').focus();
+    toggleInlineNew();
+  } else if (e.key === 'Escape') {
+    toggleInlineNew();
+  }
+}
+
+async function openEditor(path) {
+  try {
+    const r = await fetch(`${BASE_URL}/file?path=${encodeURIComponent(path)}`);
+    const data = await r.json();
+    if (data.ok) {
+      currentEditorFile = path;
+      document.getElementById('editorTitle').textContent = path.split('/').pop() || path;
+      document.getElementById('editorTextarea').value = data.content;
+      document.getElementById('editorTextarea').readOnly = false;
+      document.getElementById('saveEditorBtn').style.display = 'inline-block';
+      document.getElementById('editorPane').style.display = 'flex';
+    } else {
+      showToast(data.error || 'Failed to open file', 'error');
+    }
+  } catch (e) {
+    showToast('Failed to connect to backend', 'error');
+  }
+}
+
+function closeEditor() {
+  document.getElementById('editorPane').style.display = 'none';
+  currentEditorFile = null;
+}
+
+async function saveEditor() {
+  if (!currentEditorFile) return;
+  const content = document.getElementById('editorTextarea').value;
+  try {
+    const r = await fetch(`${BASE_URL}/file`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ path: currentEditorFile, content })
+    });
+    const data = await r.json();
+    if (data.ok) {
+      showToast('File saved cleanly to Workspace.', 'success');
+    } else {
+      showToast(data.error || 'Failed to save', 'error');
+    }
+  } catch(e) { showToast('Connection failed during save', 'error'); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+}
+
+function useChip(el) {
+  document.getElementById('inputField').value = el.textContent.trim();
+  autoResize(document.getElementById('inputField'));
+  document.getElementById('sendBtn').disabled = false;
+  sendMessage();
+}
+
+function setPriority(p) {
+  priority = p;
+  const dots = document.querySelectorAll('.p-dot');
+  dots.forEach((d, i) => d.classList.toggle('active', i < p));
+  document.getElementById('priorityLabel').textContent = `${p} / ${PRIORITY_LABELS[p]}`;
+}
+
+function toggleTrace() {
+  traceEnabled = !traceEnabled;
+  document.getElementById('traceToggle').classList.toggle('on', traceEnabled);
+  document.querySelectorAll('.trace-block').forEach(el => el.classList.toggle('visible', traceEnabled));
+}
+
+function updateUptime() {
+  const s = Math.floor((Date.now() - startTime) / 1000);
+  const h = Math.floor(s / 3600).toString().padStart(2, '0');
+  const m = Math.floor((s % 3600) / 60).toString().padStart(2, '0');
+  const sec = (s % 60).toString().padStart(2, '0');
+  document.getElementById('statUptime').textContent = `${h}:${m}:${sec}`;
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// Init priority dots
+setPriority(3);
+
+// ── SETTINGS ──
+
+const SETTINGS_FIELDS = [
+  'AGENT_NAME','ENVIRONMENT','OPENAI_API_KEY','ANTHROPIC_API_KEY','GEMINI_API_KEY',
+  'OLLAMA_HOST','POSTGRES_DSN','WORKSPACE_JAIL','MAX_AGENT_CYCLES','STRICT_QUARANTINE',
+  'CONTEXT_MEMORY_LIMIT','AGENT_TEMPERATURE','LOG_LEVEL','STREAM_RESPONSES','UI_THEME'
+];
+
+let _selectedModel = 'auto';
+
+function switchTab(tab) {
+  document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.settings-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  document.getElementById(`pane-${tab}`).classList.add('active');
+}
+
+async function fetchModelList() {
+  const grid = document.getElementById('modelPickerGrid');
+  try {
+    const [modelRes, envRes] = await Promise.all([
+      fetch(`${BASE_URL}/models`),
+      fetch(`${BASE_URL}/settings`)
+    ]);
+    const data = await modelRes.json();
+    const env = envRes.ok ? await envRes.json() : {};
+    
+    const providerLabels = { gemini: 'Google Gemini', openai: 'OpenAI', anthropic: 'Anthropic', ollama: 'Ollama (local)' };
+    let html = '';
+
+    // Auto option first
+    html += buildModelOption('auto', 'Auto', 'auto-detect by key priority');
+
+    for (const [provider, models] of Object.entries(data)) {
+      if (!models.length) continue;
+      
+      const isValidKey = (k) => k && k.trim() !== '' && k !== 'sk-...' && k !== 'sk-ant-...';
+      // Filter out providers we don't have keys for
+      if (provider === 'gemini' && !isValidKey(env.GEMINI_API_KEY)) continue;
+      if (provider === 'openai' && !isValidKey(env.OPENAI_API_KEY)) continue;
+      if (provider === 'anthropic' && !isValidKey(env.ANTHROPIC_API_KEY)) continue;
+
+      html += `<div class="model-group-label">${providerLabels[provider] || provider}</div>`;
+      models.forEach(m => {
+        html += buildModelOption(m, m, provider);
+      });
+    }
+    grid.innerHTML = html;
+
+    // Restore selection
+    selectModel(_selectedModel);
+
+    // Click handlers
+    grid.querySelectorAll('.model-option').forEach(opt => {
+      opt.addEventListener('click', () => selectModel(opt.dataset.model));
+    });
+  } catch(e) {
+    grid.innerHTML = '<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);padding:8px 0;">Could not load models.</div>';
+  }
+}
+
+function buildModelOption(id, name, provider) {
+  return `<div class="model-option" data-model="${id}" id="mopt-${id.replace(/[^a-z0-9]/gi,'-')}">
+    <div class="model-dot"></div>
+    <span class="model-name">${name}</span>
+    <span class="model-provider">${provider}</span>
+  </div>`;
+}
+
+function selectModel(modelId) {
+  _selectedModel = modelId || 'auto';
+  document.querySelectorAll('.model-option').forEach(o => {
+    o.classList.toggle('selected', o.dataset.model === _selectedModel);
+  });
+}
+
+async function fetchSettings() {
+  try {
+    const res = await fetch(`${BASE_URL}/settings`);
+    const data = await res.json();
+
+    SETTINGS_FIELDS.forEach(k => {
+      const el = document.getElementById(`cfg${k}`);
+      if (!el || !data[k]) return;
+      el.value = data[k];
+      // Sync range display
+      if (k === 'AGENT_TEMPERATURE') {
+        document.getElementById('tempVal').textContent = ' — ' + parseFloat(data[k]).toFixed(2);
+        document.getElementById('tempDisplay').textContent = parseFloat(data[k]).toFixed(2);
+      }
+    });
+
+    // Restore active model selection (from env or 'auto')
+    _selectedModel = data['ACTIVE_MODEL'] || 'auto';
+    selectModel(_selectedModel);
+
+    // Apply global UI Theme
+    const activeTheme = data['UI_THEME'] || 'theme-bioforge';
+    document.documentElement.className = activeTheme;
+
+    const status = document.getElementById('settingsStatus');
+    if (status) status.textContent = `env loaded · ${new Date().toLocaleTimeString()}`;
+  } catch (e) {
+    console.error('Failed to load settings', e);
+  }
+}
+
+async function saveSettings() {
+  const payload = {};
+
+  SETTINGS_FIELDS.forEach(k => {
+    const el = document.getElementById(`cfg${k}`);
+    if (el && el.value.trim() !== '') payload[k] = el.value.trim();
+  });
+
+  // Always include model selection
+  payload['ACTIVE_MODEL'] = _selectedModel;
+
+  const btn = document.getElementById('saveSettingsBtn');
+  const status = document.getElementById('settingsStatus');
+  btn.textContent = 'Saving...';
+
+  try {
+    const r = await fetch(`${BASE_URL}/settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (r.ok) {
+      showToast('Configuration saved.');
+      if (status) status.textContent = `saved · ${new Date().toLocaleTimeString()}`;
+      // Update the header model picker too
+      const headerPicker = document.getElementById('modelPicker');
+      if (headerPicker && _selectedModel !== 'auto') headerPicker.value = _selectedModel;
+      await connect();
+    } else {
+      showToast('Save failed.', 'error');
+    }
+  } catch {
+    showToast('Failed to save configuration', 'error');
+  } finally {
+    btn.textContent = 'Save Configuration';
+  }
+}
+
+function openSettings() {
+  document.getElementById('settingsOverlay').classList.add('show');
+  switchTab('identity');
+  fetchSettings();
+  fetchModelList();
+}
+
+function closeSettings(e) {
+  if (e && e.target.id !== 'settingsOverlay' && e.target.className !== 'settings-close') return;
+  document.getElementById('settingsOverlay').classList.remove('show');
+}
+</script>
+</body>
+</html>

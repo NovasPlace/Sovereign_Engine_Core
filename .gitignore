@@ -1,0 +1,53 @@
+# Sovereign Engine Core - Global Exclusions
+
+# Environment & Private Keys
+.env
+.env.*
+!.env.example
+
+# Python Caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Node / Electron Caches
+node_modules/
+dist/
+release/
+npm-debug.log
+yarn-error.log
+
+# Rust / Tauri Caches
+target/
+Cargo.lock
+
+# App-specific Development Debris
+server.log
+test.js
+test2.js
+*.log
+
+# Workspace Specific
+MyFirstProject/
+project.txt
+config.json
+cookbook.json
+
+# Memory Engine Caches (Keep seed, ban rest)
+memory/cortex.db*
+memory/loop_ledger.db
+memory/events.jsonl
+memory/hot.md
+memory/session.md
+memory/projects/
+
+# OS Temp Files
+.DS_Store
+Thumbs.db

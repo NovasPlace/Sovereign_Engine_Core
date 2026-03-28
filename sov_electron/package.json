@@ -1,0 +1,21 @@
+{
+  "name": "sovereign",
+  "version": "0.1.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --linux AppImage"
+  },
+  "build": {
+    "appId": "org.sovereign.engine",
+    "productName": "Sovereign",
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "devDependencies": {
+    "electron": "^29.1.5",
+    "electron-builder": "^24.13.3"
+  }
+}
