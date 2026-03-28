@@ -657,8 +657,10 @@ def invoke_agent(req: InvokeRequest):
             if not WORKSPACE_JAIL:
                 return False
             try:
-                abs_p = os.path.abspath(os.path.expanduser(target_path))
-                return abs_p.startswith(os.path.abspath(WORKSPACE_JAIL)) and ".." not in target_path
+                # Use Path.resolve() for stricter symlink and traversal protection
+                target_resolved = Path(target_path).expanduser().resolve()
+                jail_resolved = Path(WORKSPACE_JAIL).resolve()
+                return str(target_resolved).startswith(str(jail_resolved))
             except:
                 return False
 
@@ -769,9 +771,10 @@ def invoke_agent(req: InvokeRequest):
                 if snippets:
                     tool_outputs.append(f"[SEARCH RESULTS: {query}]\n" + "\n---\n".join(snippets))
                 else:
-                    tool_outputs.append(f"[SEARCH RESULTS: {query}]\nNo clear text results found.")
+                    # Fallback if DDG markup changes or blocks the scraper natively
+                    tool_outputs.append(f"[SEARCH RESULTS: {query}]\nNo clear text results found via DuckDuckGo standard parser. The DOM markup may have changed or the query was blocked natively. Try using <execute> to curl an open API or use <fetch> on a known URL.")
             except Exception as e:
-                tool_outputs.append(f"[SEARCH ERROR: {query}]\n{str(e)}")
+                tool_outputs.append(f"[SEARCH ERROR: {query}]\n{str(e)}\n\n(Fallback: DuckDuckGo HTML scraping failed. The provider might be blocking automated queries or the DOM changed.)")
 
         # 5. Fetch Block
         fetch_matches = re.finditer(r'<fetch>\s*((?:(?!</?fetch>).)*?)\s*</fetch>', llm_output, re.DOTALL)
