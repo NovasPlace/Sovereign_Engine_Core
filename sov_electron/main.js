@@ -13,19 +13,10 @@ const IS_WIN    = process.platform === 'win32';
 const IS_PACKED = app.isPackaged;
 
 // Source files — read-only inside AppImage squashfs
+// (safe to resolve at module level — doesn't call app.getPath)
 const RESOURCE_BACKEND = IS_PACKED
-  ? path.join(process.resourcesPath, 'backend')
+  ? path.join(path.dirname(process.execPath), '..', 'Resources', 'backend')
   : path.resolve(__dirname, '..');
-
-// Writable working dir — always writable regardless of packaging
-const WORKING_DIR = IS_PACKED
-  ? path.join(app.getPath('userData'), 'engine')
-  : path.resolve(__dirname, '..');
-
-const VENV_PYTHON = path.join(
-  WORKING_DIR, '.venv',
-  IS_WIN ? 'Scripts/python.exe' : 'bin/python3'
-);
 
 let TARGET_PORT = 8002;
 let TARGET_URL  = `http://127.0.0.1:${TARGET_PORT}/`;
@@ -60,22 +51,18 @@ function createWindow() {
   });
 }
 
-// ── First-run: copy read-only resources to writable dir ───
-function extractBackend(cb) {
-  console.log(`[SOVEREIGN] First run — extracting backend to: ${WORKING_DIR}`);
+// ── First-run: copy read-only resources → writable dir ───
+function extractBackend(workDir, cb) {
+  const resourceBackend = IS_PACKED
+    ? path.join(process.resourcesPath, 'backend')
+    : path.resolve(__dirname, '..');
+
+  console.log(`[SOVEREIGN] Extracting backend from: ${resourceBackend}`);
+  console.log(`[SOVEREIGN] Extracting backend to:   ${workDir}`);
   try {
-    fs.mkdirSync(WORKING_DIR, { recursive: true });
-    // Copy source files. Skip .venv / .env if already present (preserves user config on reinstall)
-    fs.cpSync(RESOURCE_BACKEND, WORKING_DIR, {
-      recursive: true,
-      filter: (src) => {
-        const rel = path.relative(RESOURCE_BACKEND, src);
-        if (rel.startsWith('.venv')) return false;
-        if (rel === '.env') return !fs.existsSync(path.join(WORKING_DIR, '.env'));
-        return true;
-      }
-    });
-    console.log('[SOVEREIGN] Backend extracted.');
+    fs.mkdirSync(workDir, { recursive: true });
+    fs.cpSync(resourceBackend, workDir, { recursive: true });
+    console.log('[SOVEREIGN] Backend extracted OK.');
   } catch (err) {
     console.error('[SOVEREIGN] Extract error:', err.message);
   }
@@ -83,42 +70,60 @@ function extractBackend(cb) {
 }
 
 // ── Install venv if missing ───────────────────────────────
-function runInstall(cb) {
-  console.log('[SOVEREIGN] Installing dependencies...');
-  const cmd = IS_WIN ? ['cmd.exe', ['/c', 'install.bat']] : ['/bin/bash', ['install.sh']];
-  const proc = spawn(cmd[0], cmd[1], { cwd: WORKING_DIR, stdio: 'inherit' });
-  proc.on('close', cb);
+function runInstall(workDir, cb) {
+  console.log('[SOVEREIGN] Installing dependencies in:', workDir);
+  const args = IS_WIN ? ['cmd.exe', ['/c', 'install.bat']] : ['/bin/bash', ['install.sh']];
+  const proc = spawn(args[0], args[1], { cwd: workDir, stdio: 'inherit' });
+  proc.on('close', (code) => { console.log('[SOVEREIGN] install exit:', code); cb(); });
   proc.on('error', (err) => { console.error('[SOVEREIGN] Install error:', err.message); cb(); });
 }
 
 // ── Start backend guardian ────────────────────────────────
-function startBackend(port) {
+function startBackend(workDir, port) {
   TARGET_PORT = port;
   TARGET_URL  = `http://127.0.0.1:${port}/`;
 
-  const env = Object.assign({}, process.env, { SOV_PORT: String(port), SOV_ELECTRON: '1' });
-  const cmd = IS_WIN ? ['cmd.exe', ['/c', 'start.bat']] : ['/bin/bash', ['start.sh']];
+  const env = Object.assign({}, process.env, {
+    SOV_PORT: String(port),
+    SOV_ELECTRON: '1'
+  });
 
-  console.log(`[SOVEREIGN] Starting backend on port ${port} from: ${WORKING_DIR}`);
-  backendProcess = spawn(cmd[0], cmd[1], { cwd: WORKING_DIR, stdio: 'inherit', env });
+  const args = IS_WIN ? ['cmd.exe', ['/c', 'start.bat']] : ['/bin/bash', ['start.sh']];
+  console.log(`[SOVEREIGN] Starting backend on port ${port} from: ${workDir}`);
+  backendProcess = spawn(args[0], args[1], { cwd: workDir, stdio: 'inherit', env });
   backendProcess.on('error', (err) => console.error('[SOVEREIGN] Backend error:', err.message));
 
-  // Give guardian time to bind before opening window
+  // Give guardian time to bind, then open window
   setTimeout(createWindow, 4000);
 }
 
-// ── Boot sequence ─────────────────────────────────────────
+// ── Boot sequence (runs AFTER app.whenReady) ──────────────
 function boot() {
+  // Safe to call app.getPath now — app is ready
+  const workDir = IS_PACKED
+    ? path.join(app.getPath('userData'), 'engine')
+    : path.resolve(__dirname, '..');
+
+  const venvPython = path.join(workDir, '.venv', IS_WIN ? 'Scripts/python.exe' : 'bin/python3');
+  const venvUvicorn = path.join(workDir, '.venv', IS_WIN ? 'Scripts/uvicorn.exe' : 'bin/uvicorn');
+  const startScript = path.join(workDir, IS_WIN ? 'start.bat' : 'start.sh');
+
+  console.log('[SOVEREIGN] workDir:', workDir);
+  console.log('[SOVEREIGN] IS_PACKED:', IS_PACKED);
+
   findFreePort(8002, (port) => {
-    const needsExtract = IS_PACKED && !fs.existsSync(path.join(WORKING_DIR, 'start.sh'));
-    const needsInstall = !fs.existsSync(VENV_PYTHON);
+    const needsExtract = IS_PACKED && !fs.existsSync(startScript);
+    const needsInstall = !fs.existsSync(venvPython) || !fs.existsSync(venvUvicorn);
+
+
+    console.log('[SOVEREIGN] needsExtract:', needsExtract, '| needsInstall:', needsInstall);
 
     if (needsExtract) {
-      extractBackend(() => runInstall(() => startBackend(port)));
+      extractBackend(workDir, () => runInstall(workDir, () => startBackend(workDir, port)));
     } else if (needsInstall) {
-      runInstall(() => startBackend(port));
+      runInstall(workDir, () => startBackend(workDir, port));
     } else {
-      startBackend(port);
+      startBackend(workDir, port);
     }
   });
 }
