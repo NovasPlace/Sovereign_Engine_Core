@@ -54,92 +54,159 @@ api = MemoryAPI()
 
 # ── Inference Engine ──────────────────────────────────────
 
+_CODE_SIGNALS = {
+    'code', 'function', 'script', 'debug', 'implement', 'refactor', 'class',
+    'error', 'bug', 'fix', 'write a', 'python', 'javascript', 'typescript',
+    'sql', 'api', 'test', 'compile', 'syntax', 'bash', 'shell', 'dockerfile',
+    'regex', 'algorithm', 'parse', 'import', 'export', 'build',
+}
+_HEAVY_SIGNALS = {
+    'analyze', 'analyse', 'explain in detail', 'comprehensive', 'essay',
+    'research', 'compare', 'architecture', 'design', 'strategy', 'review',
+    'audit', 'plan', 'reason', 'summarize entire', 'deep dive', 'thesis',
+    'evaluate', 'assessment', 'critique', 'in depth',
+}
+
+def _classify_task(prompt: str) -> str:
+    """Returns 'simple' | 'code' | 'heavy' based on prompt signals."""
+    p = prompt.lower()
+    if any(s in p for s in _CODE_SIGNALS):
+        return 'code'
+    if len(prompt.split()) > 60 or any(s in p for s in _HEAVY_SIGNALS):
+        return 'heavy'
+    return 'simple'
+
+def _probe_ollama(host: str) -> list[str]:
+    """Return list of installed Ollama model names, empty if unreachable."""
+    try:
+        req = urllib.request.Request(f"{host.rstrip('/')}/api/tags", headers={"User-Agent": "sov/1.0"})
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            return [m["name"] for m in json.loads(resp.read()).get("models", [])]
+    except Exception:
+        return []
+
+def _pick_model_auto(prompt: str) -> str | None:
+    """Route to best available model based on task complexity."""
+    task = _classify_task(prompt)
+
+    def _key(env_var, placeholder=''):
+        v = os.getenv(env_var, '').strip().strip('"').strip("'")
+        return v if v and v != placeholder else ''
+
+    gemini_key   = _key('GEMINI_API_KEY')
+    openai_key   = _key('OPENAI_API_KEY', 'sk-...')
+    anthropic_key= _key('ANTHROPIC_API_KEY', 'sk-ant-...')
+    ollama_host  = os.getenv('OLLAMA_HOST', 'http://127.0.0.1:11434').strip().rstrip('/')
+    ollama_mods  = _probe_ollama(ollama_host)
+
+    def _first_ollama(*keywords):
+        """Return first Ollama model matching any keyword, or None."""
+        for kw in keywords:
+            for m in ollama_mods:
+                if kw in m.lower():
+                    return m
+        return None
+
+    if task == 'simple':
+        # Prefer fast local model — free, private, zero latency
+        local = _first_ollama('llama3.2', 'qwen3.5', 'nemotron', 'gemma3', 'llama3.1')
+        if local:           return local
+        if gemini_key:      return 'gemini-2.0-flash'
+        if openai_key:      return 'gpt-4o-mini'
+        if anthropic_key:   return 'claude-3-5-haiku-20241022'
+        if ollama_mods:     return ollama_mods[0]
+
+    elif task == 'code':
+        # Best code model wins; prefer deepseek locally, then GPT-4o / Gemini Pro
+        code_local = _first_ollama('deepseek-coder', 'codellama', 'qwen', 'starcoder')
+        if code_local:      return code_local
+        if openai_key:      return 'gpt-4o'
+        if gemini_key:      return 'gemini-2.5-pro-preview-03-25'
+        if anthropic_key:   return 'claude-sonnet-4-5'
+        if ollama_mods:     return ollama_mods[0]
+
+    else:  # heavy
+        # Best reasoning: Gemini Pro > GPT-4o > Claude Opus > large local
+        if gemini_key:      return 'gemini-2.5-pro-preview-03-25'
+        if openai_key:      return 'gpt-4o'
+        if anthropic_key:   return 'claude-opus-4-5'
+        large = _first_ollama('llama3.1', 'mistral-nemo', 'qwen3:8b', 'gemma3:12b', 'deepseek')
+        if large:           return large
+        if ollama_mods:     return ollama_mods[0]
+
+    return None  # nothing available
+
+
 def llm_inference(prompt: str, context: str, model_override: str | None = None) -> str:
     """Dependency-free HTTP caller for the active LLM."""
     active_model = (model_override or "").strip() or os.getenv("ACTIVE_MODEL", "").strip().strip('"').strip("'")
-    
-    # Auto-detect model from configured API keys if no explicit model is set
-    if not active_model:
-        if os.getenv("GEMINI_API_KEY", "").strip().strip('"').strip("'"):
-            active_model = "gemini-2.0-flash"
-        elif os.getenv("OPENAI_API_KEY", "").strip().strip('"').strip("'") not in ("", "sk-..."):
-            active_model = "gpt-4o-mini"
-        elif os.getenv("ANTHROPIC_API_KEY", "").strip().strip('"').strip("'") not in ("", "sk-ant-..."):
-            active_model = "claude-3-haiku-20240307"
-        else:
-            # Always probe local Ollama as final fallback — no OLLAMA_HOST required
-            _ollama_host = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434").rstrip("/")
-            try:
-                _req = urllib.request.Request(f"{_ollama_host}/api/tags", headers={"User-Agent": "sov/1.0"})
-                with urllib.request.urlopen(_req, timeout=3) as _resp:
-                    _data = json.loads(_resp.read().decode("utf-8"))
-                    _mods = [m["name"] for m in _data.get("models", [])]
-                    active_model = _mods[0] if _mods else None
-            except Exception:
-                active_model = None
-            if not active_model:
-                return "No LLM configured. Open Settings → add an API key, or ensure Ollama is running locally."
+
+    # 'auto' or empty → smart task-based routing
+    if not active_model or active_model == 'auto':
+        active_model = _pick_model_auto(prompt)
+        if not active_model:
+            return "No LLM configured. Open Settings → add an API key, or ensure Ollama is running locally."
     
     sys_temp = float(os.getenv("AGENT_TEMPERATURE", "0.7"))
-    print(f"[LLM] Model: '{active_model}' | Route: {'openai' if active_model.startswith('gpt') or active_model.startswith('o1') else 'anthropic' if active_model.startswith('claude') else 'gemini' if active_model.startswith('gemini') else 'ollama'} | Temp: {sys_temp}")
-        
+    route = ('openai' if active_model.startswith(('gpt', 'o1', 'o3'))
+             else 'anthropic' if active_model.startswith('claude')
+             else 'gemini' if active_model.startswith('gemini')
+             else 'ollama')
+    print(f"[LLM] task={_classify_task(prompt)} model='{active_model}' route={route} temp={sys_temp}")
+
     try:
-        if active_model.startswith("gpt") or active_model.startswith("o1"):
+        if route == 'openai':
             api_key = os.getenv("OPENAI_API_KEY", "").strip().strip('"').strip("'")
             if not api_key: return "ERROR: OPENAI_API_KEY is not configured."
             url = "https://api.openai.com/v1/chat/completions"
             headers = {"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"}
             data = {
-                "model": active_model,
-                "temperature": sys_temp,
+                "model": active_model, "temperature": sys_temp,
                 "messages": [{"role": "system", "content": context}, {"role": "user", "content": prompt}]
             }
             req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
             with urllib.request.urlopen(req, timeout=30) as response:
-                res = json.loads(response.read().decode("utf-8"))
-                return res["choices"][0]["message"]["content"]
-                
-        elif active_model.startswith("claude"):
+                return json.loads(response.read())["choices"][0]["message"]["content"]
+
+        elif route == 'anthropic':
             api_key = os.getenv("ANTHROPIC_API_KEY", "").strip().strip('"').strip("'")
             if not api_key: return "ERROR: ANTHROPIC_API_KEY is not configured."
             url = "https://api.anthropic.com/v1/messages"
             headers = {"Content-Type": "application/json", "x-api-key": api_key, "anthropic-version": "2023-06-01"}
             data = {
                 "model": active_model, "system": context, "temperature": sys_temp,
-                "messages": [{"role": "user", "content": prompt}], "max_tokens": 1024
+                "messages": [{"role": "user", "content": prompt}], "max_tokens": 4096
             }
             req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
-            with urllib.request.urlopen(req, timeout=30) as response:
-                res = json.loads(response.read().decode("utf-8"))
-                return res["content"][0]["text"]
-                
-        elif active_model.startswith("gemini"):
+            with urllib.request.urlopen(req, timeout=60) as response:
+                return json.loads(response.read())["content"][0]["text"]
+
+        elif route == 'gemini':
             api_key = os.getenv("GEMINI_API_KEY", "").strip().strip('"').strip("'")
             if not api_key: return "ERROR: GEMINI_API_KEY is not configured."
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{active_model}:generateContent?key={api_key}"
-            headers = {"Content-Type": "application/json"}
             data = {
                 "system_instruction": {"parts": [{"text": context}]},
                 "contents": [{"parts": [{"text": prompt}]}],
                 "generationConfig": {"temperature": sys_temp}
             }
-            req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
-            with urllib.request.urlopen(req, timeout=30) as response:
-                res = json.loads(response.read().decode("utf-8"))
-                return res["candidates"][0]["content"]["parts"][0]["text"]
-                
-        else:
+            req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"),
+                                         headers={"Content-Type": "application/json"}, method="POST")
+            with urllib.request.urlopen(req, timeout=60) as response:
+                return json.loads(response.read())["candidates"][0]["content"]["parts"][0]["text"]
+
+        else:  # ollama
             host = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434").strip().rstrip("/")
-            url = f"{host.rstrip('/')}/api/chat"
-            headers = {"Content-Type": "application/json"}
+            url = f"{host}/api/chat"
             data = {
                 "model": active_model, "stream": False, "options": {"temperature": sys_temp},
                 "messages": [{"role": "system", "content": context}, {"role": "user", "content": prompt}]
             }
-            req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
-            with urllib.request.urlopen(req, timeout=60) as response:
-                res = json.loads(response.read().decode("utf-8"))
-                return res["message"]["content"]
+            req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"),
+                                         headers={"Content-Type": "application/json"}, method="POST")
+            with urllib.request.urlopen(req, timeout=120) as response:
+                return json.loads(response.read())["message"]["content"]
+
     except Exception as e:
         return f"ERROR: LLM Engine Failed - {str(e)}"
 
