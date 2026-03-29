@@ -108,12 +108,13 @@ def _pick_model_auto(prompt: str) -> str | None:
         return None
 
     if task == 'simple':
-        # Prefer fast local model — free, private, zero latency
-        local = _first_ollama('llama3.2', 'qwen3.5', 'nemotron', 'gemma3', 'llama3.1')
+        # Prefer capable local models (8B+) — small models hallucinate on the tool system prompt
+        local = _first_ollama('llama3.1', 'mistral-nemo', 'qwen3:8b', 'gemma3:12b', 'nemotron')
         if local:           return local
         if gemini_key:      return 'gemini-2.0-flash'
         if openai_key:      return 'gpt-4o-mini'
         if anthropic_key:   return 'claude-3-5-haiku-20241022'
+        # Last resort: any available local model
         if ollama_mods:     return ollama_mods[0]
 
     elif task == 'code':
