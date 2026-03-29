@@ -93,7 +93,7 @@ def _pick_model_auto(prompt: str) -> str | None:
         v = os.getenv(env_var, '').strip().strip('"').strip("'")
         return v if v and v != placeholder else ''
 
-    gemini_key   = _key('GEMINI_API_KEY')
+    gemini_key   = _key('GEMINI_API_KEY', 'AIzaSy...')
     openai_key   = _key('OPENAI_API_KEY', 'sk-...')
     anthropic_key= _key('ANTHROPIC_API_KEY', 'sk-ant-...')
     ollama_host  = os.getenv('OLLAMA_HOST', 'http://127.0.0.1:11434').strip().rstrip('/')
