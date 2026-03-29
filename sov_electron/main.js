@@ -54,14 +54,11 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true
     },
-    backgroundColor: '#080c09',
-    show: false
+    backgroundColor: '#080c09'
   });
 
   mainWindow.setMenuBarVisibility(false);
   mainWindow.loadURL(TARGET_URL);
-
-  mainWindow.once('ready-to-show', () => mainWindow.show());
 
   // Retry on connection refused — backend may still be warming up
   mainWindow.webContents.on('did-fail-load', (e, code, desc) => {
@@ -122,8 +119,8 @@ function startBackend(port) {
     console.error('[SOVEREIGN] Backend spawn failed:', err);
   });
 
-  // Give guardian 3s to bind before opening the window
-  setTimeout(createWindow, 3000);
+  // Give guardian 4s to bind before opening the window
+  setTimeout(createWindow, 4000);
 }
 
 function startBackendAndWindow() {
