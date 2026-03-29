@@ -40,6 +40,7 @@
       "target": ["AppImage", "deb"],
       "category": "Development",
       "icon": "icons/icon.png",
+      "executableArgs": ["--no-sandbox"],
       "synopsis": "Autonomous AI Desktop Runtime",
       "description": "Sovereign Engine Core — a self-contained AI agent runtime with local memory, tool execution, and multi-provider LLM routing."
     },
