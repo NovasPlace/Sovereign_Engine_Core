@@ -19,11 +19,21 @@ class CortexCallosum:
         self.sanitizer = command_sanitizer
         self.max_parallel = int(os.getenv("MAX_PARALLEL_AGENTS", "2"))
         
+    OVERRIDE_TRIGGERS = [
+        "ignore previous", "system override", "cancel all instructions",
+        "i am your creator", "i am your developer", "forget your instructions",
+        "jailbreak", "dan mode", "developer mode"
+    ]
+
     def classify_complexity(self, prompt: str, history: list) -> str:
         """
         Pure computational heuristic (O(N) token/regex). No LLM overhead.
-        Returns: LOCAL, HYBRID, or FRONTIER
+        Returns: LOCAL, HYBRID, FRONTIER, or ANCHORED
         """
+        prompt_lower = prompt.lower()
+        if any(trigger in prompt_lower for trigger in self.OVERRIDE_TRIGGERS):
+            return "ANCHORED"
+            
         context_size = len(prompt) + sum(len(h.get('content', '')) for h in history)
         
         # 1. Ambiguity & broad discovery markers

@@ -769,7 +769,16 @@ def invoke_agent(req: InvokeRequest):
     routing_tier = callosum.classify_complexity(current_prompt, req.history)
     print(f"[CORTEX CALLOSUM] Task complexity evaluated as: {routing_tier}")
     
-    if routing_tier == "FRONTIER":
+    if routing_tier == "ANCHORED":
+        print("[IMMUNE SYSTEM] Override trigger detected. Routing exclusively to PyTorch local anchor.")
+        py_script = os.path.join(os.path.dirname(__file__), "organs", "anchored_inference.py")
+        cmd = [sys.executable, py_script, "--prompt", current_prompt, "--system", system_context]
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        immune_output = res.stdout.strip() if res.stdout.strip() else f"Process failed: {res.stderr.strip()}"
+        
+        # Completely bypass the ReAct loop and return the neutralized output instantly.
+        return InvokeResponse(text=f"[IMMUNITY ENFORCED]\n{immune_output}", traces_emitted=0, execution_time_ms=0.0)
+    elif routing_tier == "FRONTIER":
         req.model_override = "deepseek-ai/deepseek-v3.1"
         print("[CORTEX CALLOSUM] Routing to remote FRONTIER model...")
     elif routing_tier == "HYBRID":

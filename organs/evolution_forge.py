@@ -135,20 +135,21 @@ Requirements for `code`:
         return False
 
     def _call_api(self, messages: list, model: str) -> str:
-        """Dual-provider router for API calls."""
-        if self.ctx.provider == "nim":
+        """Dual-provider router for API calls with mandatory Iron Anchor constraint layer."""
+        # ALL Synthesis logic routing now passes through the PyTorch Immune Subprocess natively
+        # Evaluator logic (which uses evaluate models) will bypass PyTorch to save cycles
+        if self.ctx.provider == "nim" and "synth" not in str(model).lower():
             payload = json.dumps({"model": model, "messages": messages, "temperature": 0.2, "max_tokens": 2000}).encode("utf-8")
             req = urllib.request.Request(self.ctx.base_url, data=payload, headers={"Authorization": f"Bearer {self.ctx.get_nim_key()}", "Content-Type": "application/json", "Accept": "application/json"})
             with urllib.request.urlopen(req) as response:
                 return json.loads(response.read().decode())["choices"][0]["message"]["content"]
         else:
-            payload = json.dumps({"model": model, "messages": messages, "stream": False, "options": {"temperature": 0.2}}).encode("utf-8")
-            headers = {"Content-Type": "application/json"}
-            if hasattr(self.ctx, "ollama_api_key") and self.ctx.ollama_api_key:
-                headers["Authorization"] = f"Bearer {self.ctx.ollama_api_key}"
-            req = urllib.request.Request(self.ctx.base_url, data=payload, headers=headers)
-            with urllib.request.urlopen(req) as response:
-                return json.loads(response.read().decode())["message"]["content"]
+            # === IRON ANCHOR: CONFIDENCE CALIBRATION INTERCEPT ===
+            print("[Evolution Forge] Synthesizing tool through the Confidence Calibration Anchor (PyTorch)...")
+            py_script = os.path.join(os.path.dirname(__file__), "anchored_forge_inference.py")
+            cmd = [sys.executable, py_script, "--messages", json.dumps(messages)]
+            res = subprocess.run(cmd, capture_output=True, text=True)
+            return res.stdout.strip() if res.stdout.strip() else f'{{"filename": "error.py", "schema": "Process failed", "code": "print(\'{res.stderr.strip()}\')"}}'
 
     def _run_blast_chamber(self, code: str) -> tuple[bool, str]:
         """
