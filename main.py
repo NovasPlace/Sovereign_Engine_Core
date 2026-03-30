@@ -39,6 +39,7 @@ from event_ledger import count_lines
 from organs.cortex_callosum import CortexCallosum
 from organs.semantic_chunker import SemanticChunker, handle_index, handle_read_chunk
 from organs.command_sanitizer import CommandSanitizer
+from organs.coherence_monitor import CoherenceMonitor, handle_coherence_check
 
 # Load .env variables
 load_dotenv()
@@ -46,6 +47,13 @@ load_dotenv()
 # Global Chunking Organism
 semantic_chunker = SemanticChunker()
 command_sanitizer = CommandSanitizer()
+coherence_monitor = CoherenceMonitor()
+
+# Load Static Ground Truth File (Option C)
+static_gt_path = os.path.join(str(Path(__file__).parent), "baselines", "sovereign_ground_truth.md")
+if os.path.exists(static_gt_path):
+    with open(static_gt_path, "r", encoding="utf-8") as f:
+        coherence_monitor.inject_ground_truth(f.read())
 
 # Ensure directories exist
 ensure_dirs()
@@ -57,6 +65,21 @@ app = FastAPI(
 )
 
 api = MemoryAPI()
+
+# Load CortexDB Active Memory (Option A)
+try:
+    # Attempt to pull recently verified lessons/memories directly from the API endpoint
+    # memory_api get_hot() usually returns a list or raw string depending on version
+    hot = api.get_hot()
+    if isinstance(hot, list):
+        # Taking last 5 validated ledger blocks
+        lessons_text = "\\n".join([str(item.get("content", item)) if isinstance(item, dict) else str(item) for item in hot[-5:]])
+        if lessons_text.strip():
+            coherence_monitor.inject_ground_truth(lessons_text)
+    elif isinstance(hot, str) and hot.strip():
+        coherence_monitor.inject_ground_truth(hot.strip()[-1000:])
+except Exception as e:
+    print(f"[Coherence Monitor] Warning: CortexDB Bootstrap Failed - {e}. Relying solely on static baseline.")
 
 
 # ── Inference Engine ──────────────────────────────────────
@@ -1212,9 +1235,21 @@ def invoke_agent(req: InvokeRequest):
             except Exception as e:
                 tool_outputs.append(f"[REFLECT ERROR]\n{str(e)}")
 
-        # If no XML was emitted, the agent has broken the loop normally.
+        # 12. Run Coherence Monitor on the proposed final output
         if not action_found:
-            break
+            alert = handle_coherence_check(coherence_monitor, llm_output)
+            if alert:
+                print(f"[COHERENCE MONITOR] Drift Alert Triggered. Forcing ReAct correction loop.")
+                tool_outputs.append(f"<drift_warning>\\n{alert}\\n</drift_warning>")
+                
+                # Context injection to ensure the agent physically responds to the monitor warning
+                final_output += f"\\n[SYSTEM INTERCEPT]: Semantic drift crossing critical tolerances. Review <drift_warning> directly inline.\\n"
+                
+                # We artificially flag action_found = True to trap the generation loop and force it
+                # to read its own warning rather than exiting.
+                action_found = True
+            else:
+                break
         # Prompt Injection / Steganographic Sandbox Defense
         tool_results_str = "\n---\n".join(tool_outputs)
         current_prompt = (
